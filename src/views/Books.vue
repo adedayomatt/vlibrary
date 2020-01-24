@@ -10,9 +10,8 @@
           <v-btn text color="primary" @click.native="snackbar = false">Close</v-btn>
       </v-snackbar>
 
-        <NewBook v-if="isTeacher" @do-snackbar="setSnackBar" />
-
       <v-container>
+          <NewBook v-if="isTeacher" @do-snackbar="setSnackBar" />
           <v-row>
               <v-col md="6">
                   <h4>My Collection</h4>
@@ -55,7 +54,7 @@
                         </template>
                         <template v-else>
                             <div class="text-center">
-                                <h1>Oops! can't find any book at the moment</h1>
+                                <p>There are no books yet.</p>
                             </div>
                         </template>
                       </v-card-text>

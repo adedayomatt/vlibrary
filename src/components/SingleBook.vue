@@ -23,8 +23,8 @@
                 <div>
                     <template v-if="isBookWithMe" >
                         (Me)
-                        <v-btn text dark class="primary mx-2" @click="returnBook" :loading="processing">Return to shelf</v-btn>
-                        <v-btn text dark class="primary mx-2" @click="initiateTransfer">Transfer Book</v-btn>
+                        <v-btn text dark class="primary ma-2" @click="returnBook" :loading="processing">Return to shelf</v-btn>
+                        <v-btn text dark class="primary ma-2" @click="initiateTransfer">Transfer Book</v-btn>
 
                         <v-dialog
                         v-model="transfer_dialog"
@@ -52,7 +52,7 @@
                                                             <v-icon>mdi-acount</v-icon>
                                                         </v-list-item-icon>
                                                         <v-list-item-content>
-                                                            <v-list-item-title v-text="user.name"></v-list-item-title>
+                                                            <v-list-item-title>{{user.name}} ({{user.role}})</v-list-item-title>
                                                         </v-list-item-content>
                                                     </v-list-item>
                                             

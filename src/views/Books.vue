@@ -105,15 +105,15 @@ export default {
         })
 
     firebase.db.collection('users').onSnapshot(res => {
+        let users = []
         const user_changes = res.docChanges()
         this.other_users = []; //empty the array...
         user_changes.forEach(change => {
-            let ou = []
             if(change.doc.id != this.profile.id){
-               ou.push({...change.doc.data(), id: change.doc.id}) //re add all the users again
+               users.push({...change.doc.data(), id: change.doc.id}) //re add all the users again
             }
-             this.other_users = ou
         })
+        this.other_users = users
     })
     },
     methods: {

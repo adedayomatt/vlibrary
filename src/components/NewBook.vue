@@ -92,12 +92,20 @@ export default {
                     this.loading = false;
                     this.dialog = false;
                     this.$emit('do-snackbar', `${book.title} added successfully`, 'success')
+                    this.emptyFields()
                 })
                 .catch(() => {
                     this.loading = false;
                     this.$emit('do-snackbar', `${book.title} failed to add`, 'danger');
                 })
             }
+        },
+        emptyFields(){
+            this.title = '',
+            this.isbn = '',
+            this.author = '',
+            this.description = '',
+            this.available = true
         }
     }
 }

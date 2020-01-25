@@ -11,14 +11,16 @@
       </v-snackbar>
     <v-toolbar dark prominent src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg"
     >
-      <v-app-bar-nav-icon @click = "drawer = !drawer"></v-app-bar-nav-icon>
-
-      <v-toolbar-title>Library</v-toolbar-title>
+      <v-toolbar-title>vLibrary</v-toolbar-title>
       <v-spacer></v-spacer>
       <div class="ma-1">
           <div v-if="logged_in"><strong >{{profile.name}}</strong> ({{profile.role}}) </div>
         <strong v-else>Welcome</strong>
       </div>
+
+        <router-link  dark to="/" >
+            <v-btn text dark color="lighten-2" class="primary ma-1">Home</v-btn>
+        </router-link>
       <template v-for="link in links">
           <div :key="link.name" v-if="(link.require_auth && logged_in) || (!link.require_auth && !logged_in) ">
             <router-link  dark :to="link.path" >
@@ -26,7 +28,7 @@
             </router-link>
           </div>
       </template>
-       <v-btn text dark class="warning ma-1" @click="signout" v-if="logged_in">
+       <v-btn text dark class="red ma-1" @click="signout" v-if="logged_in">
            Signout
        </v-btn>
     </v-toolbar>
@@ -51,7 +53,7 @@ export default {
             links: [
                 {
                     name : 'Books',
-                    path: '/',
+                    path: '/books',
                     require_auth: true,
                 },
                 {
@@ -59,11 +61,11 @@ export default {
                     path: '/signin',
                     require_auth: false,
                 },
-                {
-                    name : 'Sign up',
-                    path: '/signup',
-                    require_auth: false,
-                }
+                // {
+                //     name : 'Sign up',
+                //     path: '/signup',
+                //     require_auth: false,
+                // }
 
     
             ]
@@ -99,7 +101,7 @@ export default {
                 this.logged_in = false
                 this.user = null
                 this.setSnackBar("Signed out", "success")
-                this.$router.push('/signin')
+                this.$router.go({path: '/'})
             })
         }
     }

@@ -1,87 +1,104 @@
 <template>
- <v-card :class="!alreadyBorrowed ? 'available' : 'unavailable' ">
-        <v-card-title
-            class="headline"
-            v-text="book.title"
-        ></v-card-title>
-        <v-card-subtitle class="text-left">
-            <div class="text-left">
-                <small>Author: {{book.author}}</small>
-            </div>
-        </v-card-subtitle>
-        <v-card-text class="text-left">
-            <div>ISBN: {{book.isbn}}</div>
-            <p>{{book.description}}</p>
-            <div>Added: {{timeDiff(book.timestamp.created)}}</div>
-            <div>Last Borrowed: <span v-if="book.timestamp.last_borrowed">{{timeDiff(book.timestamp.last_borrowed)}}</span><span v-else><i>never borrowed</i></span></div>
-            <div v-if="alreadyBorrowed">
-                Currently with <strong>{{book_user ? book_user.name : ''}}</strong>
-            </div>
-        </v-card-text>
-    <v-card-actions>
-            <template v-if="alreadyBorrowed">
-                <div>
-                    <template v-if="isBookWithMe" >
-                        (Me)
-                        <v-btn text dark class="primary ma-2" @click="returnBook" :loading="processing">Return to shelf</v-btn>
-                        <v-btn text dark class="primary ma-2" @click="initiateTransfer">Transfer Book</v-btn>
-
-                        <v-dialog
-                        v-model="transfer_dialog"
-                        width="500"
-                        >     <v-card>
-                                <v-card-title
-                                class="headline"
-                                primary-title
-                                >
-                                Transfer Book: {{book.title}}
-                                </v-card-title>
-
-                                <v-card-text>
-                                    <template v-if="other_users.length > 0">
-                                        <p>Select another user to transfer book to</p>
-                                        <template>
-                                            <v-list rounded>
-                                                <v-subheader>Users</v-subheader>
-                                            
-                                                    <v-list-item
-                                                    v-for="(user, i) in other_users"
-                                                    :key="i" @click="transferBookTo(user)"
-                                                    >
-                                                        <v-list-item-icon>
-                                                            <v-icon>mdi-acount</v-icon>
-                                                        </v-list-item-icon>
-                                                        <v-list-item-content>
-                                                            <v-list-item-title>{{user.name}} ({{user.role}})</v-list-item-title>
-                                                        </v-list-item-content>
-                                                    </v-list-item>
-                                            
-                                            </v-list>
-                                        </template>
-                                    </template>
-                                    <template v-else>
-                                        <h4>No other user to transfer to</h4>
-                                    </template>
-                                </v-card-text>
-
-                                <v-card-actions>
-                                    <v-btn text class="danger" @click="transfer_dialog = false" >
-                                            <span>cancel</span>
-                                    </v-btn>
-                                </v-card-actions>
-                            </v-card>
-                        </v-dialog>
-
-                    </template>
+<div>
+    <template v-if="ready">
+        <v-card :class="!alreadyBorrowed ? 'available' : 'unavailable' ">
+            <v-card-title
+                class="headline"
+                v-text="book.title"
+            ></v-card-title>
+            <v-card-subtitle class="text-left">
+                <div class="text-left">
+                    <small>Author: {{book.author}}</small>
                 </div>
-            </template>
-            <template v-else >
-                <v-btn text  dark class="success" @click="borrowBook" :loading="processing"  v-if="isStudent">Borrow Book</v-btn>
-            </template>
-            <v-spacer></v-spacer>
-            <v-btn text  dark class="red" @click="removeBook" :loading="processing"  v-if="isTeacher">Remove Book</v-btn>
-    </v-card-actions>
-    </v-card>
+            </v-card-subtitle>
+            <v-card-text class="text-left">
+                <div>ISBN: {{book.isbn}}</div>
+                <p>{{book.description}}</p>
+                <div>Added: {{timeDiff(book.timestamp.created)}}</div>
+                <div>Last Borrowed: <span v-if="book.timestamp.last_borrowed">{{timeDiff(book.timestamp.last_borrowed)}}</span><span v-else><i>never borrowed</i></span></div>
+                <div v-if="alreadyBorrowed">
+                    Currently with <strong>{{username(book_user)}}</strong> 
+                    <div v-if="book_user.last_signin"><i>signed in:  {{timeDiff(book_user.last_signin)}}</i></div>
+                    <div v-else><i>Not seen in a while</i></div>
+                </div>
+                
+            </v-card-text>
+        <v-card-actions>
+                <template v-if="alreadyBorrowed">
+                    <div>
+                        <template v-if="isBookWithMe" >
+                            (Me)
+                            <v-btn text dark class="primary ma-2" @click="returnBook" :loading="processing">Return to shelf</v-btn>
+                            <v-btn text dark class="primary ma-2" @click="initiateTransfer">Transfer Book</v-btn>
+
+                            <v-dialog
+                            v-model="transfer_dialog"
+                            width="500"
+                            >     <v-card>
+                                    <v-card-title
+                                    class="headline"
+                                    primary-title
+                                    >
+                                    Transfer Book: {{book.title}}
+                                    </v-card-title>
+
+                                    <v-card-text>
+                                        <template v-if="other_users.length > 0">
+                                            <p>Select another user to transfer book to</p>
+                                            <template>
+                                                <v-list rounded>
+                                                    <v-subheader>Users</v-subheader>
+                                                
+                                                        <v-list-item
+                                                        v-for="(user, i) in other_users"
+                                                        :key="i" @click="transferBookTo(user)"
+                                                        >
+                                                            <v-list-item-content>
+                                                                <v-list-item-title>
+                                                                    {{username(user)}} <span v-if="user.role">({{user.role}})</span>
+                                                                </v-list-item-title>
+                                                            </v-list-item-content>
+                                                        </v-list-item>
+                                                
+                                                </v-list>
+                                            </template>
+                                        </template>
+                                        <template v-else>
+                                            <h4>No other user to transfer to</h4>
+                                        </template>
+                                    </v-card-text>
+
+                                    <v-card-actions>
+                                        <v-btn text class="danger" @click="transfer_dialog = false" >
+                                                <span>cancel</span>
+                                        </v-btn>
+                                    </v-card-actions>
+                                </v-card>
+                            </v-dialog>
+
+                        </template>
+                    </div>
+                </template>
+                <template v-else >
+                    <v-btn text  dark class="success" @click="borrowBook" :loading="processing"  v-if="isStudent">Borrow Book</v-btn>
+                </template>
+                <v-spacer></v-spacer>
+                <v-btn text  dark class="red" @click="removeBook" :loading="processing"  v-if="isTeacher">Remove Book</v-btn>
+        </v-card-actions>
+        </v-card>
+    </template>
+    <template v-else>
+        <v-sheet
+            :color="`grey lighten-4`"
+            class="px-3 pt-3 pb-3"
+        >
+            <v-skeleton-loader
+            class="mx-auto"
+            type="card"
+            ></v-skeleton-loader>
+        </v-sheet>
+    </template>
+</div>
 </template>
 
 
@@ -91,6 +108,7 @@ import firebase from './../firebase'
 export default {
     data(){
         return {
+            ready: false,
             processing: false,
             book: this._book, //get the book from the prop
             profile: this._user,
@@ -106,7 +124,7 @@ export default {
             return this.profile.role == 'teacher' ? true : false
         },
         isStudent(){
-            return this.profile.role == 'student' ? true : false
+            return !this.profile.role || this.profile.role == 'student' ? true : false
         },
         alreadyBorrowed(){
             return this.book.user && this.book.user !== null ? true : false;
@@ -116,6 +134,31 @@ export default {
         }
     },
     methods: {
+        // prep the book for mounting
+        prepBook(){
+            this.ready = false
+            
+        //if the book is with a user
+            if(this.alreadyBorrowed){
+                this.get_book_user()
+                .then((doc) => {
+                    // confirm if the user exist first
+                    if(doc.exists){
+                        this.book_user = doc.data()
+                    }else{
+                        this.book_user = {name: 'user unavailable'}
+                    }
+                    // purposely set a delay in rendering
+                    setTimeout(() => {
+                        this.ready = true
+                    },3000)
+                   
+                })
+            }
+            else{
+                this.ready = true
+            }
+        },
         borrowBook(){
             this.processing = true
             firebase.db.collection('books').doc(this.book.id).update({
@@ -157,10 +200,7 @@ export default {
             })
         },
         get_book_user(){
-          firebase.db.collection('users').doc(this.book.user).get()
-          .then(doc => {
-             this.book_user = doc.data()
-          })
+          return firebase.db.collection('users').doc(this.book.user).get()
         },
         initiateTransfer(){
             this.transfer_dialog = true
@@ -171,11 +211,15 @@ export default {
             })
             .then(()=>{
                 this.transfer_dialog = false
-                this.$emit('do-snackbar', `Transfered ${this.book.title} to ${user.name}`, 'success')
+                this.$emit('do-snackbar', `Transfered ${this.book.title} to ${this.username(user)}`, 'success')
             })
             .catch(e=> {
-                this.$emit('do-snackbar', `Could not transfer ${this.book.title} to ${user.name}. ${e.message}`, 'warning')
+                this.$emit('do-snackbar', `Could not transfer ${this.book.title} to ${this.username(user)}. ${e.message}`, 'warning')
             })
+        },
+        // decide what to use as displame for a user
+        username(user){
+            return user.name ? user.name : user.email
         },
      timeDiff(timestamp){
         let date = new Date((timestamp*1000));
@@ -199,18 +243,13 @@ export default {
 
     },
     created(){
-        //if the book is with a user
-        if(this.alreadyBorrowed){
-            this.get_book_user()
-        }
-
+        this.prepBook()
     },
     watch:{
         _book: function(newData){
+            //repreapare the book
             this.book = newData
-            if(this.book.user){ //if the book user has been changed, get the new person
-                this.get_book_user()
-            }
+            this.prepBook()
         },
         _user: function(newData){
             this.profile = newData

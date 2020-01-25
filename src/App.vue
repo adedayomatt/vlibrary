@@ -1,10 +1,11 @@
 <template>
   <v-app>
     
-    <NavBar :key="$route.fullPath" />
+    <NavBar />
     <v-content>
       <v-container>
         <router-view></router-view>
+        <div class="text-center mt-5 text--grey"><small>Adedayo Matthews</small></div>
       </v-container>
     </v-content>
   </v-app>

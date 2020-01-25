@@ -88,7 +88,8 @@ export default {
                 .then((user) => {
                     return firebase.db.collection('users').doc(user.user.uid).set({
                         name: this.name,
-                        role: this.teacher ? 'teacher' : 'student'
+                        role: this.teacher ? 'teacher' : 'student',
+                        last_signin: Math.floor(new Date().getTime())
                     })
                 })
                 .then(() => {

@@ -11,57 +11,59 @@
       </v-snackbar>
 
       <v-container>
-          <NewBook v-if="isTeacher" @do-snackbar="setSnackBar" />
-          <v-row>
-              <v-col md="6">
-                  <h4>My Collection</h4>
-                  <v-card>
-                      <v-card-text>
-                        <template v-if="myCollection.length > 0">
-                            <v-row dense>
-                            <v-col
-                                v-for="(book, i) in myCollection"
-                                :key="i"
-                                cols="12"
-                            >
-                                <SingleBook :_book="book" :_user="profile" :_other_users="other_users" @do-snackbar="setSnackBar" />
-                            </v-col>
-                            </v-row>
-                        </template>
-                        <template v-else>
-                            <div class="text-center">
-                               <p>No books in your collections yet, ask a friend to transfer one to you or borrow from the library here</p>
-                            </div>
-                        </template>
-                      </v-card-text>
-                  </v-card>
-                
-              </v-col>
-              <v-col md="6">
-                  <h4>All Books</h4>
-                  <v-card>
-                      <v-card-text>
-                        <template v-if="books.length > 0">
-                            <v-row dense>
-                            <v-col
-                                v-for="(book, i) in books"
-                                :key="i"
-                                cols="12"
-                            >
-                                <SingleBook :_book="book" :_user="profile" :_other_users="other_users" @do-snackbar="setSnackBar" />
-                            </v-col>
-                            </v-row>
-                        </template>
-                        <template v-else>
-                            <div class="text-center">
-                                <p>There are no books yet.</p>
-                            </div>
-                        </template>
-                      </v-card-text>
-                  </v-card>
-                
-              </v-col>
-          </v-row>
+          <template v-if="logged_in">
+            <NewBook v-if="isTeacher" @do-snackbar="setSnackBar" />
+            <v-row>
+                <v-col md="6">
+                    <h4>My Collection ({{myCollection.length}})</h4>
+                    <v-card>
+                        <v-card-text>
+                            <template v-if="myCollection.length > 0">
+                                <v-row dense>
+                                <v-col
+                                    v-for="(book, i) in myCollection"
+                                    :key="i"
+                                    cols="12"
+                                >
+                                    <SingleBook :_book="book" :_user="profile" :_other_users="other_users" @do-snackbar="setSnackBar" />
+                                </v-col>
+                                </v-row>
+                            </template>
+                            <template v-else>
+                                <div class="text-center">
+                                <p>No books in your collections yet, ask a friend to transfer one to you or borrow from the library here</p>
+                                </div>
+                            </template>
+                        </v-card-text>
+                    </v-card>
+                    
+                </v-col>
+                <v-col md="6">
+                    <h4>All Books</h4>
+                    <v-card>
+                        <v-card-text>
+                            <template v-if="books.length > 0">
+                                <v-row dense>
+                                <v-col
+                                    v-for="(book, i) in books"
+                                    :key="i"
+                                    cols="12"
+                                >
+                                    <SingleBook :_book="book" :_user="profile" :_other_users="other_users" @do-snackbar="setSnackBar" />
+                                </v-col>
+                                </v-row>
+                            </template>
+                            <template v-else>
+                                <div class="text-center">
+                                    <p>There are no books yet.</p>
+                                </div>
+                            </template>
+                        </v-card-text>
+                    </v-card>
+                    
+                </v-col>
+            </v-row>
+          </template>
       </v-container>
 
 
@@ -101,16 +103,7 @@ export default {
         }
     },
     created(){
-        if(firebase.auth.currentUser){
-            this.logged_in = true,
-            this.user = firebase.auth.currentUser
-            firebase.db.collection('users').doc(this.user.uid).get()
-            .then((doc) => {
-                this.profile =  doc.data()
-                this.profile.id = doc.id
-            })
-        }
-
+        this.getProfile()
         firebase.db.collection('books').orderBy('timestamp.created', 'desc').onSnapshot(res => {
             const changes = res.docChanges()
             changes.forEach(change => {
@@ -154,7 +147,19 @@ export default {
             this.snackbar = true;
             this.snackbar_message = message;
             this.snackbar_color = status;
+        },
+        getProfile(){
+            if(firebase.auth.currentUser){
+                this.logged_in = true,
+                this.user = firebase.auth.currentUser
+                firebase.db.collection('users').doc(this.user.uid).get()
+                .then((doc) => {
+                    this.profile =  doc.data()
+                    this.profile.id = doc.id
+                })
+            }
         }
+
     },
 
 }

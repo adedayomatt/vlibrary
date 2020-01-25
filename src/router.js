@@ -11,11 +11,18 @@ let router = new Router({
         {
             path: '/',
             name: 'home',
+            component: () => import('./views/Home'),
+
+        },
+        {
+            path: '/books',
+            name: 'books',
             component: () => import('./views/Books'),
             meta: {
                 requiresAuth: true
             }
         },
+
         {
             path: '/book/:id',
             name: 'book',
@@ -33,16 +40,16 @@ let router = new Router({
             }
 
         },
-        {
-            path: '/signup',
-            name: 'sigup',
-            component: () => import('./views/Signup'),
-            meta: {
-                requiresGuest: true
-            }
+        // {
+        //     path: '/signup',
+        //     name: 'sigup',
+        //     component: () => import('./views/Signup'),
+        //     meta: {
+        //         requiresGuest: true
+        //     }
 
 
-        }
+        // }
 
     ]
 });
@@ -65,9 +72,8 @@ router.beforeEach((to, from, next) => {
             next()
         }
     }else if(to.matched.some( record => record.meta.requiresGuest)){
-        //if loggein
+        //if logge in already
         if(firebase.auth.currentUser){
-            //if not logged in
             next({
                 path: '/',
             })

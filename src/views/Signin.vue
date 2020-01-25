@@ -146,7 +146,7 @@ export default {
                 firebase.auth.signInWithEmailAndPassword(this.email, this.password)
                 .then((user) => {
                     signed_in_user = user.user
-                   return firebase.db.collection('users').doc(user.user.uid).update({last_signin: Math.floor(new Date().getTime())})
+                   return firebase.db.collection('users').doc(user.user.uid).update({last_signin:  Math.round(new Date().getTime()/1000)})
                 })
                 .then(() =>{
                     this.signingin = false
@@ -176,7 +176,7 @@ export default {
                 .then((snapshot) => {
                   if(snapshot.exists){//if the user record already exist
                       return userRef.update({
-                          last_signin: Math.floor(new Date().getTime())
+                          last_signin:  Math.round(new Date().getTime()/1000)
                       })
                     }
                     else{//if no record before, first time sign in
@@ -185,7 +185,7 @@ export default {
                       this.profile.email = signin.user.email
                       return userRef.set({
                           email: signin.user.email,
-                          last_signin: Math.floor(new Date().getTime())
+                          last_signin:  Math.round(new Date().getTime()/1000)
                       })
                     }
                 })

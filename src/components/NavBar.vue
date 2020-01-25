@@ -9,6 +9,44 @@
           {{snackbar_message}}
           <v-btn text color="primary" @click.native="snackbar = false">Close</v-btn>
       </v-snackbar>
+
+      <template>
+            <v-card
+                class="mx-auto"
+                width="256"
+            >
+            <v-navigation-drawer
+                class="deep-purple accent-4"
+                dark
+                app
+                v-model="drawer"
+                src="https://cdn.vuetifyjs.com/images/backgrounds/bg-2.jpg"
+            >
+                <v-list>
+                <v-list-item
+                    v-for="item in links"
+                    :key="item.title"
+                    link
+                >
+                    <v-list-item-icon>
+                    <v-icon>mdi-user</v-icon>
+                    </v-list-item-icon>
+
+                    <v-list-item-content>
+                    <v-list-item-title>{{ item.name }}</v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+                </v-list>
+
+                <template v-slot:append>
+                <div class="pa-2">
+                    <v-btn block>Logout</v-btn>
+                </div>
+                </template>
+            </v-navigation-drawer>
+        </v-card>
+    </template>
+
     <v-toolbar dark prominent src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg"
     >
       <v-toolbar-title>vLibrary</v-toolbar-title>
@@ -32,7 +70,12 @@
            Signout
        </v-btn>
     </v-toolbar>
+
+
+    
   </nav>
+
+  
 </template>
 
 <script>

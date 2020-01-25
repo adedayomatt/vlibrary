@@ -14,23 +14,21 @@
             <v-card-text class="text-left">
                 <div>ISBN: {{book.isbn}}</div>
                 <p>{{book.description}}</p>
+                <hr>
                 <div>Added: {{timeDiff(book.timestamp.created)}}</div>
                 <div>Last Borrowed: <span v-if="book.timestamp.last_borrowed">{{timeDiff(book.timestamp.last_borrowed)}}</span><span v-else><i>never borrowed</i></span></div>
                 <div v-if="alreadyBorrowed">
                     Currently with <strong>{{username(book_user)}}</strong> 
-                    <div v-if="book_user.last_signin"><i>signed in:  {{timeDiff(book_user.last_signin)}}</i></div>
-                    <div v-else><i>Not seen in a while</i></div>
+                    <span v-if="book_user.last_signin"><i>(signed in:  {{timeDiff(book_user.last_signin)}})</i></span>
+                    <span v-else><i>Not seen in a while</i></span>
                 </div>
-                
             </v-card-text>
         <v-card-actions>
                 <template v-if="alreadyBorrowed">
                     <div>
                         <template v-if="isBookWithMe" >
-                            (Me)
-                            <v-btn text dark class="primary ma-2" @click="returnBook" :loading="processing">Return to shelf</v-btn>
-                            <v-btn text dark class="primary ma-2" @click="initiateTransfer">Transfer Book</v-btn>
-
+                            <v-btn text dark small class="primary ma-2" @click="returnBook" :loading="processing">Return to shelf</v-btn>
+                            <v-btn text dark small class="primary ma-2" @click="initiateTransfer">Transfer Book</v-btn>
                             <v-dialog
                             v-model="transfer_dialog"
                             width="500"
@@ -41,14 +39,13 @@
                                     >
                                     Transfer Book: {{book.title}}
                                     </v-card-title>
+                                    <hr>
 
                                     <v-card-text>
                                         <template v-if="other_users.length > 0">
                                             <p>Select another user to transfer book to</p>
                                             <template>
                                                 <v-list rounded>
-                                                    <v-subheader>Users</v-subheader>
-                                                
                                                         <v-list-item
                                                         v-for="(user, i) in other_users"
                                                         :key="i" @click="transferBookTo(user)"
@@ -57,6 +54,10 @@
                                                                 <v-list-item-title>
                                                                     {{username(user)}} <span v-if="user.role">({{user.role}})</span>
                                                                 </v-list-item-title>
+                                                                <small>
+                                                                    <span v-if="user.last_signin"><i>(signed in:  {{timeDiff(user.last_signin)}})</i></span>
+                                                                    <span v-else><i>Not seen in a while</i></span>
+                                                                </small>
                                                             </v-list-item-content>
                                                         </v-list-item>
                                                 
@@ -69,7 +70,7 @@
                                     </v-card-text>
 
                                     <v-card-actions>
-                                        <v-btn text class="danger" @click="transfer_dialog = false" >
+                                        <v-btn text small dark class="red" @click="transfer_dialog = false" >
                                                 <span>cancel</span>
                                         </v-btn>
                                     </v-card-actions>
@@ -83,7 +84,7 @@
                     <v-btn text  dark class="success" @click="borrowBook" :loading="processing"  v-if="isStudent">Borrow Book</v-btn>
                 </template>
                 <v-spacer></v-spacer>
-                <v-btn text  dark class="red" @click="removeBook" :loading="processing"  v-if="isTeacher">Remove Book</v-btn>
+                <v-btn text  dark class="red" small @click="removeBook" :loading="processing"  v-if="isTeacher">Remove Book</v-btn>
         </v-card-actions>
         </v-card>
     </template>

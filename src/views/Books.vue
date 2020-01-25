@@ -12,55 +12,47 @@
 
       <v-container>
           <template v-if="logged_in">
-            <NewBook v-if="isTeacher" @do-snackbar="setSnackBar" />
+            
             <v-row>
-                <v-col md="6">
+                <v-col cols="12" md="6">
                     <h4>My Collection ({{myCollection.length}})</h4>
-                    <v-card>
-                        <v-card-text>
-                            <template v-if="myCollection.length > 0">
-                                <v-row dense>
-                                <v-col
-                                    v-for="(book, i) in myCollection"
-                                    :key="i"
-                                    cols="12"
-                                >
-                                    <SingleBook :_book="book" :_user="profile" :_other_users="other_users" @do-snackbar="setSnackBar" />
-                                </v-col>
-                                </v-row>
-                            </template>
-                            <template v-else>
-                                <div class="text-center">
-                                <p>No books in your collections yet, ask a friend to transfer one to you or borrow from the library here</p>
-                                </div>
-                            </template>
-                        </v-card-text>
-                    </v-card>
+                    <template v-if="myCollection.length > 0">
+                        <v-row dense>
+                        <v-col
+                            v-for="(book, i) in myCollection"
+                            :key="i"
+                            cols="12"
+                        >
+                            <SingleBook :_book="book" :_user="profile" :_other_users="other_users" @do-snackbar="setSnackBar" />
+                        </v-col>
+                        </v-row>
+                    </template>
+                    <template v-else>
+                        <div class="text-center">
+                        <p>No books in your collections yet, ask a friend to transfer one to you or borrow from the library here</p>
+                        </div>
+                    </template>
                     
                 </v-col>
-                <v-col md="6">
+                <v-col cols="12" md="6">
                     <h4>All Books</h4>
-                    <v-card>
-                        <v-card-text>
-                            <template v-if="books.length > 0">
-                                <v-row dense>
-                                <v-col
-                                    v-for="(book, i) in books"
-                                    :key="i"
-                                    cols="12"
-                                >
-                                    <SingleBook :_book="book" :_user="profile" :_other_users="other_users" @do-snackbar="setSnackBar" />
-                                </v-col>
-                                </v-row>
-                            </template>
-                            <template v-else>
-                                <div class="text-center">
-                                    <p>There are no books yet.</p>
-                                </div>
-                            </template>
-                        </v-card-text>
-                    </v-card>
-                    
+                    <template v-if="books.length > 0">
+                        <v-row dense>
+                        <v-col
+                            v-for="(book, i) in books"
+                            :key="i"
+                            cols="12"
+                        >
+                            <SingleBook :_book="book" :_user="profile" :_other_users="other_users" @do-snackbar="setSnackBar" />
+                        </v-col>
+                        </v-row>
+                    </template>
+                    <template v-else>
+                        <div class="text-center">
+                            <p>There are no books yet.</p>
+                        </div>
+                    </template>
+            
                 </v-col>
             </v-row>
           </template>
@@ -72,11 +64,10 @@
 
 <script>
 import firebase from './../firebase'
-import NewBook from './../components/NewBook';
 import SingleBook from './../components/SingleBook';
 
 export default {
-    components: {NewBook, SingleBook},
+    components: {SingleBook},
     data(){
         return {
             logged_in: false,

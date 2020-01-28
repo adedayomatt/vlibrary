@@ -81,7 +81,7 @@
                     </div>
                 </template>
                 <template v-else >
-                    <v-btn text  dark class="success" @click="borrowBook" :loading="processing"  v-if="isStudent">Borrow Book</v-btn>
+                    <v-btn text  dark class="success" @click="borrowBook" :loading="processing">Borrow Book</v-btn>
                 </template>
                 <v-spacer></v-spacer>
                 <v-btn text  dark class="red" small @click="removeBook" :loading="processing"  v-if="isTeacher">Remove Book</v-btn>

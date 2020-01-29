@@ -1,6 +1,17 @@
 <template>
   <!-- App.vue -->
   <v-app>
+        <v-snackbar
+          v-model="snackbar"
+          :timeout="4000"
+          top
+          :color="snackbar_color"
+      >
+          {{snackbar_message}}
+          <v-btn dark small text class="red" @click.native="snackbar = false">Close</v-btn>
+      </v-snackbar>
+
+
     <v-navigation-drawer 
     app 
     v-model="drawer"
@@ -32,22 +43,48 @@
       
              
        <v-list>
-          <v-list-item
-              v-for="link in links"
-              :key="link.name"
-              link
-          >
-              <v-list-item-icon>
-                <v-icon>mdi-user</v-icon>
-              </v-list-item-icon>
-              <v-list-item-content>
-                 <router-link :to="link.path" v-if="(link.require_auth && logged_in) || (!link.require_auth && !logged_in)" >
-                    <v-list-item>
-                    {{ link.name }}
-                    </v-list-item>
-                </router-link>
-              </v-list-item-content>
-          </v-list-item>
+          <router-link to="/" >
+            <v-list-item link
+            >
+                <v-list-item-icon>
+                  <v-icon>mdi-user</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                      <v-list-item>
+                        Books
+                      </v-list-item>
+                </v-list-item-content>
+            </v-list-item>
+           </router-link>
+
+            <router-link to="/my-books" >
+            <v-list-item link
+            >
+                <v-list-item-icon>
+                  <v-icon>mdi-user</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                      <v-list-item>
+                        My Books
+                      </v-list-item>
+                </v-list-item-content>
+            </v-list-item>
+           </router-link>
+
+            <router-link to="/trash" v-if="isTeacher">
+            <v-list-item link
+            >
+                <v-list-item-icon>
+                  <v-icon>mdi-user</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                      <v-list-item>
+                        Trashed Books
+                      </v-list-item>
+                </v-list-item-content>
+            </v-list-item>
+           </router-link>
+
           </v-list>
 
           <template v-slot:append>
@@ -109,8 +146,19 @@ export default {
             links: [
                 {
                     name : 'Books',
-                    path: '/books',
+                    path: '/',
                     require_auth: true,
+                },
+                {
+                    name : 'My Books',
+                    path: '/my-books',
+                    require_auth: true,
+                },
+                {
+                    name : 'Trash',
+                    path: '/trash',
+                    require_auth: true,
+                    only_teacher: true,
                 },
                 // {
                 //     name : 'Sign up',

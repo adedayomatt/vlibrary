@@ -11,13 +11,21 @@ let router = new Router({
         {
             path: '/',
             name: 'home',
-            component: () => import('./views/Home'),
+            component: () => import('./views/AllBooks'),
 
         },
         {
-            path: '/books',
-            name: 'books',
-            component: () => import('./views/Books'),
+            path: '/my-books',
+            name: 'myBooks',
+            component: () => import('./views/MyBooks'),
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/trash',
+            name: 'trash',
+            component: () => import('./views/TrashBooks'),
             meta: {
                 requiresAuth: true
             }
